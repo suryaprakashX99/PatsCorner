@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pat's Corner Shop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: warm, neighbourly, festive but tidy — a local shop that has been on the corner 11 years
+   IDEA: the shop window at Christmas: lit glass, striped awning, snow on the sill
+   PICTURE: illustrated storefront at night with lights, wreath and falling snow
+   COLOUR and TYPE: pine green fields, cranberry red, gold accent on snow white; Fredoka + Nunito Sans
+   LAYOUT: sticky header, hero scene, category rail, product grid, rewards band, footer; separate admin console */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0b1f19);--ink:light-dark(#17231f,#eef3ef);--mute:light-dark(#5b6b64,#a7b8b0);
+--card:light-dark(#ffffff,#12302a);--line:light-dark(#e3e9e5,#244a40);--soft:light-dark(#f3f7f4,#0f2822);
+--pine:#0f3b2e;--pine2:#174d3d;--red:#c0262d;--red2:#9e1b22;--gold:#e8b33c;--snow:#ffffff}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Nunito Sans",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Fredoka,"Trebuchet MS",sans-serif;font-weight:600;line-height:1.08;margin:0;text-wrap:balance}
+h1{font-size:clamp(32px,5vw,50px)}h2{font-size:clamp(26px,3.4vw,34px)}h3{font-size:19px}
+p{margin:0}a{color:inherit}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}.wrap{max-width:1240px;margin:0 auto}
+.scroll{overflow-x:auto}pre{overflow-x:auto}code{overflow-wrap:anywhere}html{scroll-padding-top:80px}
+button,input,select,textarea{font:inherit;font-size:16px;color:inherit}
+.btn{min-height:44px;padding:10px 18px;border-radius:999px;border:0;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:8px;justify-content:center;background:var(--red);color:#fff;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--red2)}.btn.ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 2px currentColor}
+.btn.gold{background:var(--gold);color:#2a1d00}.btn.pine{background:var(--pine);color:#fff}.btn.sm{min-height:36px;padding:6px 14px;font-size:14px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+input,select,textarea{width:100%;min-height:44px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg)}
+label{display:grid;gap:4px;font-weight:600;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* header */
+header{position:sticky;top:0;z-index:20;background:var(--pine);color:#fff;box-shadow:0 2px 0 var(--red)}
+.hd{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px max(5vw,16px);flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
+.logo svg{width:46px;height:46px;flex:none}.logo b{font:600 23px/1 Fredoka,sans-serif;display:block}.logo small{font-size:12px;color:var(--gold);font-weight:700}
+.search{flex:1 1 220px;max-width:420px}.search input{border:0;border-radius:999px;background:#ffffff;color:#17231f;padding-left:16px}
+.hd nav{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.pill{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:999px;min-height:44px;padding:8px 14px;font-weight:700;cursor:pointer;display:inline-flex;gap:8px;align-items:center;white-space:nowrap}
+.pill:hover{background:rgba(255,255,255,.22)}.pill .n{background:var(--gold);color:#2a1d00;border-radius:999px;padding:0 7px;font-size:13px}
+.ribbon{background:var(--red);color:#fff;text-align:center;font-weight:700;font-size:14px;padding:7px 12px}
+/* hero */
+.hero{background:linear-gradient(180deg,var(--pine) 0,var(--pine2) 100%);color:#fff;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(20px,4vw,48px);align-items:center}
+.hero p{font-size:17px;max-width:52ch;color:#dbe9e2;margin:14px 0 22px}
+.hero .scene{aspect-ratio:640/420;width:100%;border-radius:22px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.hero .scene svg{width:100%;height:100%;display:block}
+.facts{display:flex;gap:22px;flex-wrap:wrap;margin-top:22px;font-size:14px;color:#cfe0d8}.facts b{display:block;font:600 24px Fredoka,sans-serif;color:var(--gold)}
+.snow{position:absolute;inset:0;pointer-events:none}
+.snow i{position:absolute;top:-10px;width:6px;height:6px;border-radius:50%;background:#fff;opacity:.75;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(110vh) translateX(30px)}}
+@media(prefers-reduced-motion:reduce){.snow{display:none}}
+/* catalogue */
+.cats{display:flex;gap:8px;overflow-x:auto;padding:4px 0 14px}
+.cat{flex:none;border:1.5px solid var(--line);background:var(--card);border-radius:999px;min-height:44px;padding:8px 16px;font-weight:700;cursor:pointer}
+.cat[aria-pressed=true]{background:var(--pine);color:#fff;border-color:var(--pine)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.card .img{aspect-ratio:4/3;display:grid;place-items:center;position:relative}.card .img svg{width:58%;height:auto}
+.tag{position:absolute;top:10px;left:10px;background:var(--red);color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px}
+.card .bd{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card .nm{font-weight:700;line-height:1.3}.card .meta{font-size:13px;color:var(--mute)}
+.card .ft{display:flex;align-items:center;justify-content:space-between;margin-top:auto;gap:8px}
+.price{font:600 20px Fredoka,sans-serif;white-space:nowrap}
+.qty{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:999px}
+.qty button{width:36px;height:36px;border:0;background:none;cursor:pointer;font-size:18px;font-weight:700}.qty span{min-width:22px;text-align:center;font-weight:700}
+.empty{padding:40px;text-align:center;color:var(--mute);border:2px dashed var(--line);border-radius:18px}
+/* rewards band */
+.rewards{background:var(--red);color:#fff}
+.rw{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:22px}
+.rw div{background:rgba(255,255,255,.1);border-radius:18px;padding:18px}.rw b{font:600 28px Fredoka,sans-serif;color:var(--gold);display:block}
+footer{background:var(--pine);color:#cfe0d8;font-size:14px}
+footer .wrap{display:flex;gap:20px;justify-content:space-between;flex-wrap:wrap;align-items:center}
+.linkbtn{background:none;border:0;color:var(--gold);font-weight:700;cursor:pointer;text-decoration:underline;min-height:44px}
+/* drawer & modal */
+.veil{position:fixed;inset:0;background:rgba(6,20,15,.55);z-index:40;display:none}
+.veil.on{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(430px,100%);background:var(--bg);z-index:41;transform:translateX(105%);transition:transform .25s;display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;background:var(--pine);color:#fff}
+.db{padding:16px 18px;overflow-y:auto;flex:1;display:grid;gap:12px;align-content:start}
+.df{padding:16px 18px;border-top:1.5px solid var(--line);display:grid;gap:8px}
+.line{display:flex;justify-content:space-between;gap:10px}.line span:last-child{white-space:nowrap;font-weight:700}
+.ci{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center}
+.ci .th{width:52px;height:52px;border-radius:12px;display:grid;place-items:center}.ci .th svg{width:70%}
+.box{background:var(--soft);border-radius:16px;padding:14px;display:grid;gap:10px}
+.x{background:none;border:0;color:inherit;font-size:26px;width:44px;height:44px;cursor:pointer;line-height:1}
+.modal{position:fixed;z-index:42;left:50%;top:50%;transform:translate(-50%,-50%);width:min(480px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:var(--bg);border-radius:22px;display:none;box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.modal.on{display:block}.modal .mh{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 0 22px}.modal .mb{padding:12px 22px 22px;display:grid;gap:12px}
+.tabs{display:flex;gap:6px;background:var(--soft);padding:5px;border-radius:999px}
+.tabs button{flex:1;min-height:40px;border:0;border-radius:999px;background:none;font-weight:700;cursor:pointer}.tabs button[aria-selected=true]{background:var(--card);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.sso{display:grid;gap:8px}.sso button{justify-content:flex-start;background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.sso button:hover{background:var(--soft)}
+.or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.note{font-size:13px;color:var(--mute)}.demo{background:#fff4d6;color:#5a4300;border-radius:10px;padding:8px 12px;font-size:14px}
+.err{color:var(--red);font-weight:700;font-size:14px;min-height:1em}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--pine);color:#fff;padding:12px 20px;border-radius:999px;font-weight:700;z-index:50;box-shadow:0 8px 20px rgba(0,0,0,.3);display:none;max-width:calc(100% - 24px)}
+.toast.on{display:block}
+/* account */
+.acct{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:20px;align-items:start}
+.ptsbig{background:var(--pine);color:#fff;border-radius:22px;padding:22px;display:grid;gap:10px}
+.ptsbig b{font:600 52px/1 Fredoka,sans-serif;color:var(--gold)}
+.bar{height:10px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden}.bar i{display:block;height:100%;background:var(--gold)}
+.panel{background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px}
+table{width:100%;border-collapse:collapse;font-size:15px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:13px;color:var(--mute);font-weight:700}td b{white-space:nowrap}td.r,th.r{text-align:right;white-space:nowrap}
+.st{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700;background:var(--soft)}
+.st.New{background:#fde2e3;color:#8a1219}.st.Ready{background:#fff1c9;color:#6a4b00}.st.Completed{background:#d8efe2;color:#145234}
+/* admin */
+.admin{min-height:100vh;background:var(--soft)}
+.ahd{background:#10161a;color:#fff}.ahd .hd{gap:10px}.ahd .logo small{color:#9fb3c8}
+.atabs{display:flex;gap:6px;overflow-x:auto;padding:0 max(5vw,16px);max-width:1240px;margin:0 auto}
+.atabs button{flex:none;min-height:44px;border:0;background:none;color:#cbd5df;font-weight:700;padding:8px 14px;border-bottom:3px solid transparent;cursor:pointer}
+.atabs button[aria-selected=true]{color:#fff;border-color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.stat{background:var(--card);border-radius:18px;padding:16px;border:1.5px solid var(--line)}.stat b{font:600 30px Fredoka,sans-serif;display:block;white-space:nowrap}.stat span{color:var(--mute);font-size:14px}
+.alog{max-width:420px;margin:8vh auto;background:var(--card);border-radius:22px;padding:28px;display:grid;gap:14px;border:1.5px solid var(--line)}
+.sw{display:flex;align-items:center;gap:10px;font-weight:700}.sw input{width:22px;min-height:22px;height:22px}
+[hidden]{display:none!important}
+@media(max-width:860px){.hero .wrap,.acct{grid-template-columns:minmax(0,1fr)}.hd nav{margin-left:0}}
+@media(max-width:600px){.hero .scene{order:-1}.search{order:5;flex-basis:100%;max-width:none}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card .ft{flex-wrap:wrap}.logo small{display:none}
+table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--mute);font-size:12px;font-weight:700}.stack td:empty{display:none}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="logo" viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="#0f3b2e"/><circle cx="32" cy="32" r="27.5" fill="none" stroke="#e8b33c" stroke-width="1.6"/><path d="M32 6.5l2.3 4.7 5.1.7-3.7 3.6.9 5.1-4.6-2.4-4.6 2.4.9-5.1-3.7-3.6 5.1-.7z" fill="#e8b33c"/><rect x="17" y="31" width="30" height="19" rx="1" fill="#fff"/><path d="M14 23h36v6.5a3.6 3.6 0 0 1-7.2 0 3.6 3.6 0 0 1-7.2 0 3.6 3.6 0 0 1-7.2 0 3.6 3.6 0 0 1-7.2 0 3.6 3.6 0 0 1-7.2 0z" fill="#c0262d"/><path d="M21.2 23h7.2v6.5a3.6 3.6 0 0 1-7.2 0zM35.6 23h7.2v6.5a3.6 3.6 0 0 1-7.2 0z" fill="#fff"/><rect x="20" y="36" width="12" height="9" rx="1" fill="#e8b33c"/><rect x="36" y="36" width="8" height="14" rx="1" fill="#c0262d"/><path d="M12 50q20-4 40 0v3H12z" fill="#fff"/></symbol>
+</defs></svg>
+
+<!-- ============ CUSTOMER SHOP ============ -->
+<div id="shopView">
+<header><div class="hd">
+  <a class="logo" href="#shop" aria-label="Pat's Corner home"><svg><use href="#logo"/></svg><span><b>Pat's Corner</b><small>Newsagent &amp; grocer · since 2015</small></span></a>
+  <div class="search"><input id="q" type="search" placeholder="Search milk, mince pies, papers…" aria-label="Search products"></div>
+  <nav>
+    <button class="pill" data-act="goRewards">Rewards</button>
+    <button class="pill" id="acctBtn" data-act="account">Sign in</button>
+    <button class="pill" data-act="openCart" aria-label="Open basket">Basket <span class="n" id="cartN">0</span></button>
+  </nav>
+</div></header>
+<div class="ribbon" id="ribbon">Double reward points on every order until 31 December · Free delivery over €40</div>
+
+<main id="home">
+<section class="hero band"><div class="snow" id="snow"></div><div class="wrap">
+  <div>
+    <h1>Your Christmas shop, from the corner you know</h1>
+    <p>Pat's Corner has kept the neighbourhood stocked for over 11 years. Order your groceries, papers and festive treats online, collect them in store or have them delivered, and earn reward points on every basket.</p>
+    <div class="row"><a class="btn gold" href="#shopnow" data-act="toShop">Start shopping</a><button class="btn ghost" data-act="goRewards">How rewards work</button></div>
+    <div class="facts"><div><b>11+ years</b>on the corner</div><div><b>Same day</b>click &amp; collect</div><div><b id="factPts">2×</b>points this December</div></div>
+  </div>
+  <div class="scene">
+  <svg viewBox="0 0 640 420" role="img" aria-label="Illustration of the Pat's Corner shop front at night with snow and Christmas lights">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a2620"/><stop offset="1" stop-color="#1d5a46"/></linearGradient>
+      <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#f3b94a"/></linearGradient>
+      <radialGradient id="halo"><stop offset="0" stop-color="#ffd77a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd77a" stop-opacity="0"/></radialGradient>
+    </defs>
+    <rect width="640" height="420" fill="url(#sky)"/>
+    <circle cx="545" cy="72" r="30" fill="#fdf3d0"/><circle cx="557" cy="64" r="28" fill="#123a30" opacity=".35"/>
+    <g fill="#fff" opacity=".8"><circle cx="60" cy="50" r="1.6"/><circle cx="130" cy="90" r="1.2"/><circle cx="250" cy="40" r="1.5"/><circle cx="400" cy="60" r="1.2"/><circle cx="470" cy="120" r="1.4"/><circle cx="600" cy="150" r="1.2"/><circle cx="330" cy="100" r="1"/></g>
+    <ellipse cx="120" cy="372" rx="260" ry="70" fill="#dfe9ef"/><ellipse cx="560" cy="380" rx="240" ry="60" fill="#e9f0f4"/>
+    <ellipse cx="320" cy="300" rx="230" ry="130" fill="url(#halo)"/>
+    <!-- building -->
+    <rect x="170" y="118" width="300" height="236" fill="#8f2a2a"/>
+    <g stroke="#7a2222" stroke-width="2"><path d="M170 150h300M170 182h300M170 214h300"/></g>
+    <rect x="470" y="118" width="12" height="236" fill="#6e1f1f"/>
+    <rect x="160" y="104" width="330" height="20" rx="10" fill="#fff"/>
+    <path d="M168 122q20 10 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0" fill="#fff"/>
+    <rect x="198" y="134" width="244" height="46" rx="8" fill="#0f3b2e" stroke="#e8b33c" stroke-width="3"/>
+    <text x="320" y="166" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="27" fill="#e8b33c">PAT'S CORNER</text>
+    <!-- awning -->
+    <g id="awning"></g>
+    <g id="lights"></g>
+    <!-- window -->
+    <rect x="192" y="236" width="160" height="104" rx="4" fill="url(#glow)"/>
+    <g fill="#c98a3d"><rect x="192" y="270" width="160" height="4"/><rect x="192" y="304" width="160" height="4"/></g>
+    <g id="shelf"></g>
+    <rect x="192" y="236" width="160" height="104" rx="4" fill="none" stroke="#5e1717" stroke-width="6"/>
+    <path d="M272 236v104" stroke="#5e1717" stroke-width="4"/>
+    <rect x="186" y="338" width="172" height="10" rx="5" fill="#fff"/>
+    <!-- door -->
+    <rect x="372" y="236" width="80" height="118" rx="4" fill="#0f3b2e"/>
+    <rect x="384" y="248" width="56" height="40" rx="3" fill="url(#glow)" opacity=".85"/>
+    <circle cx="412" cy="300" r="16" fill="none" stroke="#2f7d4a" stroke-width="9"/>
+    <g fill="#c0262d"><circle cx="404" cy="292" r="2.6"/><circle cx="420" cy="296" r="2.6"/><circle cx="410" cy="312" r="2.6"/><path d="M406 314l6-4 6 4-6 3z"/></g>
+    <circle cx="440" cy="320" r="3" fill="#e8b33c"/>
+    <!-- tree -->
+    <g transform="translate(92 214)"><rect x="-7" y="118" width="14" height="22" fill="#5b3a22"/>
+      <path d="M0 0L-44 70h20L-56 118h112L24 70h20z" fill="#1f6b46"/><path d="M0 0L-44 70h20L-56 118h20L0 40z" fill="#165238"/>
+      <path d="M-30 70q30 10 60 0M-44 112q44 12 88 0" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M0 -14l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#e8b33c"/>
+      <g fill="#c0262d"><circle cx="-18" cy="88" r="5"/><circle cx="20" cy="96" r="5"/><circle cx="6" cy="60" r="4.5"/></g><circle cx="-6" cy="100" r="5" fill="#e8b33c"/></g>
+    <rect x="0" y="350" width="640" height="70" fill="#f4f8fb"/>
+    <path d="M0 352q80-14 160 0t160 0 160 0 160 0v8H0z" fill="#fff"/>
+    <g fill="#c0262d"><rect x="520" y="322" width="34" height="30" rx="3"/><rect x="560" y="332" width="26" height="20" rx="3" fill="#e8b33c"/></g>
+    <path d="M537 322v30M520 337h34" stroke="#e8b33c" stroke-width="4"/><path d="M573 332v20" stroke="#c0262d" stroke-width="4"/>
+  </svg>
+  </div>
+</div></section>
+
+<section class="band" id="shopnow"><div class="wrap">
+  <div class="row" style="justify-content:space-between;margin-bottom:12px"><h2 id="gridTitle">Shop the shelves</h2><select id="sort" aria-label="Sort products" style="width:auto"><option value="feat">Christmas picks first</option><option value="lo">Price: low to high</option><option value="hi">Price: high to low</option><option value="az">Name A–Z</option></select></div>
+  <div class="cats" id="cats" role="toolbar" aria-label="Categories"></div>
+  <div class="grid" id="grid"></div>
+</div></section>
+
+<section class="rewards band" id="rewards"><div class="wrap">
+  <h2>Corner Rewards: points on every basket</h2>
+  <p style="margin-top:10px;max-width:62ch;color:#ffe3e4">Sign up with Google, any email address or your phone number. Points land in your account as soon as an order is placed, and you can spend them at checkout.</p>
+  <div class="rw" id="rwInfo"></div>
+  <h3 style="margin-top:28px">Free products you can claim</h3>
+  <div class="rw" id="rwFree"></div>
+</div></section>
+</main>
+
+<main id="accountView" hidden><section class="band"><div class="wrap" id="acctBody"></div></section></main>
+
+<footer class="band"><div class="wrap">
+  <div><b style="color:#fff">Pat's Corner</b> · Newsagent &amp; grocer since 2015<br>Open 7am–10pm, every day except Christmas Day</div>
+  <div class="row"><span>Shop staff?</span><a class="linkbtn" href="#admin">Admin login</a></div>
+</div></footer>
+</div>
+
+<!-- ============ ADMIN CONSOLE ============ -->
+<div id="adminView" class="admin" hidden>
+  <div class="ahd"><div class="hd">
+    <a class="logo" href="#admin"><svg><use href="#logo"/></svg><span><b>Pat's Corner</b><small>Shop admin</small></span></a>
+    <nav><a class="pill" href="#shop">View shop</a><button class="pill" id="aOut" data-act="adminOut" hidden>Sign out</button></nav>
+  </div>
+  <div class="atabs" id="atabs" role="tablist" hidden></div></div>
+  <div class="band"><div class="wrap" id="adminBody"></div></div>
+</div>
+
+<div class="veil" id="veil" data-act="closeAll"></div>
+<aside class="drawer" id="drawer" aria-label="Basket"><div class="dh"><h3>Your basket</h3><button class="x" data-act="closeAll" aria-label="Close">×</button></div><div class="db" id="cartBody"></div><div class="df" id="cartFoot"></div></aside>
+<div class="modal" id="modal" role="dialog" aria-modal="true"><div class="mh"><h3 id="mTitle"></h3><button class="x" data-act="closeAll" aria-label="Close">×</button></div><div class="mb" id="mBody"></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+{
+const KEY='patscorner_demo_v1';
+const CATS=[['christmas','Christmas'],['bakery','Bakery'],['dairy','Dairy & eggs'],['fruit','Fruit & veg'],['pantry','Pantry'],['sweets','Sweets & treats'],['news','News & cards']];
+const TINT={christmas:'#fde7e8',bakery:'#fbefdc',dairy:'#e3eefb',fruit:'#e7f3df',pantry:'#f3e9df',sweets:'#f8e3f1',news:'#eceff3'};
+const ICON={
+ christmas:'<circle cx="50" cy="58" r="26" fill="#6b3a1f"/><path d="M25 52q4-16 25-16t25 16q-5 5-9 1t-8 3-8-3-8 3-8-3-9 1z" fill="#fff"/><circle cx="46" cy="34" r="4.5" fill="#c0262d"/><circle cx="55" cy="34" r="4.5" fill="#c0262d"/><path d="M38 28l9 6-10 2zM63 28l-9 6 10 2z" fill="#2f7d4a"/>',
+ bakery:'<path d="M20 72V50a30 20 0 0 1 60 0v22z" fill="#d9a45b"/><path d="M20 50a30 20 0 0 1 60 0" fill="none" stroke="#a86f2c" stroke-width="4"/><path d="M36 40l6 10M50 36l6 10M64 40l5 9" stroke="#a86f2c" stroke-width="3.5" stroke-linecap="round"/>',
+ dairy:'<path d="M42 20h16v9l9 12v34a6 6 0 0 1-6 6H39a6 6 0 0 1-6-6V41l9-12z" fill="#fff" stroke="#3d7fc9" stroke-width="3"/><rect x="33" y="50" width="34" height="16" fill="#3d7fc9"/><rect x="40" y="14" width="20" height="7" rx="2" fill="#3d7fc9"/>',
+ fruit:'<circle cx="50" cy="58" r="25" fill="#f08a24"/><path d="M50 33c0-9 7-13 16-13-2 9-7 13-16 13z" fill="#3f8f3a"/><circle cx="41" cy="50" r="5" fill="#fff" opacity=".35"/>',
+ pantry:'<rect x="29" y="30" width="42" height="48" rx="5" fill="#7a4b2a"/><ellipse cx="50" cy="30" rx="21" ry="6" fill="#a0703f"/><rect x="29" y="45" width="42" height="17" fill="#e8b33c"/>',
+ sweets:'<path d="M16 40l16 10-16 10zM84 40l-16 10 16 10z" fill="#e8b33c"/><circle cx="50" cy="50" r="19" fill="#b03a8a"/><path d="M38 45q12 12 24 0" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/>',
+ news:'<rect x="23" y="25" width="54" height="50" rx="3" fill="#fff" stroke="#4a5568" stroke-width="3"/><rect x="30" y="32" width="40" height="8" fill="#4a5568"/><path d="M30 49h18M30 57h18M30 65h18" stroke="#9aa3b0" stroke-width="3"/><rect x="53" y="47" width="17" height="20" fill="#c0262d"/>'};
+const icon=c=>`<svg viewBox="0 0 100 100" aria-hidden="true">${ICON[c]||ICON.pantry}</svg>`;
+const P=(id,name,cat,price,size,stock,festive)=>({id,name,cat,price,size,stock,festive:!!festive});
+const seed=()=>({
+ products:[P('p1','Mince pies, pack of 6','christmas',3.5,'6 pies',40,1),P('p2','Christmas pudding','christmas',6.99,'450g',18,1),P('p3','Cranberry sauce','christmas',2.79,'200g jar',25,1),P('p4','Brussels sprouts','fruit',1.49,'500g',30,1),
+  P('p5','Selection box','sweets',4.99,'each',35,1),P('p6','Chocolate tin','sweets',9.99,'600g',20,1),P('p7','Christmas cards, pack of 10','news',4.5,'10 cards',22,1),P('p8','Wrapping paper roll','news',3,'4m',28,1),
+  P('p9','Sliced white pan','bakery',2.2,'800g',24),P('p10','Brown soda bread','bakery',2.85,'each',12),P('p11','Fresh whole milk','dairy',2.49,'2L',36),P('p12','Free-range eggs','dairy',4.29,'12 eggs',20),
+  P('p13','Irish butter','dairy',3.99,'454g',26),P('p14','Clementines','fruit',2.99,'1kg net',30,1),P('p15','Rooster potatoes','fruit',3.29,'2.5kg',18),P('p16','Tea bags','pantry',3.89,'80 bags',30),
+  P('p17','Hot chocolate','pantry',4.25,'400g tin',15,1),P('p18','Daily newspaper','news',2.8,'today',50)],
+ freebies:[{id:'r1',pid:'p18',cost:250},{id:'r2',pid:'p1',cost:350},{id:'r3',pid:'p17',cost:450},{id:'r4',pid:'p2',cost:700}],
+ settings:{earn:5,redeem:100,double:true,welcome:50,deliveryFee:3.5,freeOver:40},
+ users:[{id:'u1',name:'Mary Byrne',email:'mary.byrne@gmail.com',phone:'',pass:'',provider:'Google',points:620,joined:'2026-10-02'}],
+ orders:[{id:'PC-1001',uid:'u1',date:'2026-11-18',items:[{pid:'p11',name:'Fresh whole milk',qty:2,price:2.49},{pid:'p9',name:'Sliced white pan',qty:1,price:2.2}],sub:7.18,disc:0,fee:3.5,total:10.68,earned:70,spent:0,mode:'Delivery',status:'Completed'}],
+ admin:{email:'admin@patscorner.ie',pass:'christmas'},session:null,adminSession:false,seq:1002});
+let S=null;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!S.products)S=seed();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const eur=n=>'€'+(Math.round(n*100)/100).toFixed(2);
+const prod=id=>S.products.find(p=>p.id===id);
+const me=()=>S.users.find(u=>u.id===S.session)||null;
+const mult=()=>S.settings.double?2:1;
+const uid=p=>p+Date.now().toString(36)+Math.floor(Math.random()*1e4);
+let cart={},cat='all',redeem=0,claimed=[],aTab='overview',pending=null;
+
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),2600)}
+function closeAll(){['veil','drawer','modal'].forEach(i=>$(i).classList.remove('on'))}
+function modal(title,html){$('mTitle').textContent=title;$('mBody').innerHTML=html;$('drawer').classList.remove('on');$('veil').classList.add('on');$('modal').classList.add('on');const f=$('mBody').querySelector('input,select');if(f)f.focus()}
+
+/* ---------- shop ---------- */
+function renderCats(){$('cats').innerHTML=[['all','Everything'],...CATS].map(([k,v])=>`<button class="cat" data-act="cat" data-id="${k}" aria-pressed="${cat===k}">${v}</button>`).join('')}
+function renderGrid(){
+ const q=$('q').value.trim().toLowerCase(),so=$('sort').value;
+ let list=S.products.filter(p=>(cat==='all'||p.cat===cat)&&(!q||p.name.toLowerCase().includes(q)));
+ const fn={feat:(a,b)=>b.festive-a.festive,lo:(a,b)=>a.price-b.price,hi:(a,b)=>b.price-a.price,az:(a,b)=>a.name.localeCompare(b.name)}[so];list.sort(fn);
+ $('gridTitle').textContent=cat==='all'?'Shop the shelves':CATS.find(c=>c[0]===cat)[1];
+ $('grid').innerHTML=list.length?list.map(p=>{const n=cart[p.id]||0,out=p.stock<=0;return `<article class="card"><div class="img" style="background:${TINT[p.cat]}">${p.festive?'<span class="tag">Christmas</span>':''}${icon(p.cat)}</div>
+  <div class="bd"><div class="nm">${esc(p.name)}</div><div class="meta">${esc(p.size)} · ${out?'Out of stock':p.stock<6?'Only '+p.stock+' left':'In stock'} · earns ${Math.floor(p.price*S.settings.earn*mult())} pts</div>
+  <div class="ft"><span class="price">${eur(p.price)}</span>${n?`<span class="qty"><button data-act="dec" data-id="${p.id}" aria-label="One fewer">−</button><span>${n}</span><button data-act="inc" data-id="${p.id}" aria-label="One more">+</button></span>`:`<button class="btn sm" data-act="inc" data-id="${p.id}" ${out?'disabled':''}>Add</button>`}</div></div></article>`}).join(''):`<div class="empty" style="grid-column:1/-1">Nothing matches “${esc(q)}”. Try another word or pick a category.</div>`;
+}
+function renderRewardsBand(){const s=S.settings;
+ $('rwInfo').innerHTML=`<div><b>${s.earn*mult()} pts</b>for every €1 you spend${s.double?' (doubled for Christmas)':''}</div><div><b>${s.redeem} pts = €1</b>off your basket at checkout</div><div><b>+${s.welcome} pts</b>welcome bonus when you register</div>`;
+ $('rwFree').innerHTML=S.freebies.map(f=>{const p=prod(f.pid);return p?`<div><b>${f.cost} pts</b>Free ${esc(p.name.toLowerCase())}</div>`:''}).join('')||'<div>No free products listed yet.</div>';
+ $('factPts').textContent=s.double?'2×':s.earn+' pts';$('ribbon').textContent=(s.double?'Double reward points on every order this Christmas':'Earn points on every order')+` · Free delivery over ${eur(s.freeOver)}`;
+}
+function totals(){const s=S.settings,u=me();
+ const items=Object.entries(cart).map(([id,q])=>({p:prod(id),q})).filter(x=>x.p);
+ const sub=items.reduce((a,x)=>a+x.p.price*x.q,0);
+ const freeCost=claimed.reduce((a,id)=>a+(S.freebies.find(f=>f.id===id)?.cost||0),0);
+ const maxRedeem=u?Math.max(0,Math.min(Math.floor((u.points-freeCost)/s.redeem)*s.redeem,Math.floor(sub*s.redeem/s.redeem)*s.redeem)):0;
+ if(redeem>maxRedeem)redeem=maxRedeem;
+ const disc=Math.min(redeem/s.redeem,sub);
+ const mode=$('cartBody').dataset.mode||'Collect';
+ const fee=mode==='Delivery'&&sub-disc<s.freeOver&&sub>0?s.deliveryFee:0;
+ const total=Math.max(0,sub-disc+fee);
+ const earned=Math.floor((sub-disc)*s.earn*mult());
+ return{items,sub,disc,fee,total,earned,freeCost,maxRedeem,mode,spent:redeem+freeCost};
+}
+function renderCart(footOnly){
+ const n=Object.values(cart).reduce((a,b)=>a+b,0);$('cartN').textContent=n;
+ const u=me(),t=totals(),s=S.settings;
+ if(!t.items.length&&!claimed.length){$('cartBody').innerHTML='<div class="empty">Your basket is empty. Add a few things from the shelves.</div>';$('cartFoot').innerHTML='<button class="btn pine" data-act="closeAll">Keep shopping</button>';return}
+ let h=t.items.map(({p,q})=>`<div class="ci"><div class="th" style="background:${TINT[p.cat]}">${icon(p.cat)}</div><div><b>${esc(p.name)}</b><div class="note">${eur(p.price)} · ${esc(p.size)}</div></div><span class="qty"><button data-act="dec" data-id="${p.id}" aria-label="One fewer">−</button><span>${q}</span><button data-act="inc" data-id="${p.id}" aria-label="One more">+</button></span></div>`).join('');
+ h+=claimed.map(id=>{const f=S.freebies.find(x=>x.id===id),p=f&&prod(f.pid);return p?`<div class="ci"><div class="th" style="background:${TINT[p.cat]}">${icon(p.cat)}</div><div><b>${esc(p.name)}</b><div class="note">Free reward · ${f.cost} pts</div></div><button class="btn sm ghost" data-act="unclaim" data-id="${id}">Remove</button></div>`:''}).join('');
+ h+=`<div class="box"><b>How would you like it?</b><div class="tabs">${['Collect','Delivery'].map(m=>`<button data-act="mode" data-id="${m}" aria-selected="${t.mode===m}">${m==='Collect'?'Click & collect':'Delivery'}</button>`).join('')}</div>${t.mode==='Delivery'?`<span class="note">Delivery ${eur(s.deliveryFee)}, free over ${eur(s.freeOver)}.</span>`:'<span class="note">Ready to collect in store within 2 hours.</span>'}</div>`;
+ if(u){const avail=u.points-t.spent;
+  h+=`<div class="box"><div class="line"><b>Your points</b><span>${u.points} pts</span></div>
+  <label>Use points for money off (${s.redeem} pts = €1)<input type="range" id="redeem" min="0" max="${t.maxRedeem}" step="${s.redeem}" value="${redeem}" ${t.maxRedeem?'':'disabled'}></label>
+  <div class="note" id="redeemNote">${redeem?`Using ${redeem} pts for ${eur(t.disc)} off.`:t.maxRedeem?'Slide to use your points.':'Collect '+s.redeem+' pts to unlock money off.'}</div>
+  <b>Claim a free product</b>${S.freebies.map(f=>{const p=prod(f.pid);if(!p)return'';const on=claimed.includes(f.id);return `<div class="line"><span>${esc(p.name)} · ${f.cost} pts</span>${on?'<span>Added</span>':`<button class="btn sm gold" data-act="claim" data-id="${f.id}" ${avail<f.cost||p.stock<=0?'disabled':''}>Claim</button>`}</div>`}).join('')}</div>`;
+ }else h+=`<div class="box"><b>Earn ${t.earned} points on this order</b><span class="note">Sign in or register to collect points and spend the ones you have.</span><button class="btn sm pine" data-act="login">Sign in or register</button></div>`;
+ if(!footOnly)$('cartBody').innerHTML=h;else{const nt=$('redeemNote');if(nt)nt.textContent=redeem?`Using ${redeem} pts for ${eur(t.disc)} off.`:'Slide to use your points.'}
+ $('cartFoot').innerHTML=`<div class="line"><span>Subtotal</span><span>${eur(t.sub)}</span></div>${t.disc?`<div class="line"><span>Points discount</span><span>−${eur(t.disc)}</span></div>`:''}${t.mode==='Delivery'?`<div class="line"><span>Delivery</span><span>${t.fee?eur(t.fee):'Free'}</span></div>`:''}<div class="line" style="font-size:19px"><b>Total</b><span>${eur(t.total)}</span></div><div class="note">You'll earn ${t.earned} points.</div><button class="btn" data-act="checkout">Checkout</button>`;
+}
+function openCart(){renderCart();$('modal').classList.remove('on');$('veil').classList.add('on');$('drawer').classList.add('on')}
+
+/* ---------- customer auth ---------- */
+function loginModal(tab='signin',msg=''){
+ const sso=`<div class="sso"><button class="btn" data-act="google"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.8 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.2-13.5-9.9l-7.8 6.1C6.6 42.6 14.6 48 24 48z"/></svg>Continue with Google</button><button class="btn" data-act="phone">Continue with phone number</button></div><div class="or">or use your email</div>`;
+ const body=tab==='signin'?`<form data-form="signin" class="mb" style="padding:0"><label>Email<input name="email" type="email" required autocomplete="email"></label><label>Password<input name="pass" type="password" required autocomplete="current-password"></label><div class="err">${esc(msg)}</div><button class="btn">Sign in</button></form>`
+ :`<form data-form="register" class="mb" style="padding:0"><label>Your name<input name="name" required autocomplete="name"></label><label>Email (Gmail, Outlook, any address)<input name="email" type="email" required autocomplete="email"></label><label>Create a password<input name="pass" type="password" minlength="6" required autocomplete="new-password"></label><div class="err">${esc(msg)}</div><button class="btn">Create account · get ${S.settings.welcome} pts</button></form>`;
+ modal('Sign in to Pat\'s Corner',`<div class="tabs"><button data-act="ltab" data-id="signin" aria-selected="${tab==='signin'}">Sign in</button><button data-act="ltab" data-id="register" aria-selected="${tab==='register'}">Register</button></div>${sso}${body}<p class="note">Customer accounts only. Shop staff use the admin login at the bottom of the page.</p>`);
+}
+function signIn(u,isNew){S.session=u.id;save();closeAll();renderAll();toast(isNew?`Welcome, ${u.name.split(' ')[0]}! ${S.settings.welcome} bonus points added`:`Welcome back, ${u.name.split(' ')[0]}`);if(pending==='checkout'){pending=null;openCart()}}
+function newUser(o){const u={id:uid('u'),points:S.settings.welcome,joined:new Date().toISOString().slice(0,10),email:'',phone:'',pass:'',...o};S.users.push(u);return u}
+
+/* ---------- account ---------- */
+function renderAccount(){const u=me();if(!u){location.hash='#shop';return}
+ const next=S.freebies.map(f=>f.cost).filter(c=>c>u.points).sort((a,b)=>a-b)[0];
+ const ords=S.orders.filter(o=>o.uid===u.id).slice().reverse();
+ $('acctBody').innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:18px"><h2>Hello, ${esc(u.name.split(' ')[0])}</h2><div class="row"><a class="btn ghost sm" href="#shop">Back to shop</a><button class="btn sm" data-act="signout">Sign out</button></div></div>
+ <div class="acct"><div style="display:grid;gap:16px"><div class="ptsbig"><span>Your Corner Rewards balance</span><b>${u.points} pts</b><span>Worth ${eur(u.points/S.settings.redeem)} off, or a free product</span>${next?`<div class="bar"><i style="width:${Math.min(100,u.points/next*100)}%"></i></div><span class="note" style="color:#cfe0d8">${next-u.points} pts to your next free product</span>`:'<span style="color:var(--gold);font-weight:700">You can claim any free product now</span>'}</div>
+ <div class="panel"><h3>Account details</h3><div class="note">Signed in with ${esc(u.provider)}</div>${u.email?`<div>${esc(u.email)}</div>`:''}${u.phone?`<div>${esc(u.phone)}</div>`:''}<div class="note">Member since ${esc(u.joined)}</div></div></div>
+ <div class="panel"><h3>Your orders</h3>${ords.length?`<table class="stack"><thead><tr><th>Order</th><th>Date</th><th>Items</th><th>Status</th><th class="r">Total</th><th class="r">Points</th></tr></thead><tbody>${ords.map(o=>`<tr><td><b>${o.id}</b></td><td>${o.date}</td><td>${o.items.map(i=>esc(i.qty+'× '+i.name)).join(', ')}</td><td><span class="st ${o.status}">${o.status}</span></td><td class="r">${eur(o.total)}</td><td class="r">+${o.earned}${o.spent?' / −'+o.spent:''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No orders yet. Your first basket earns points straight away.</div>'}</div></div>`;
+}
+
+/* ---------- admin ---------- */
+const ATABS=[['overview','Overview'],['products','Products'],['rewards','Rewards'],['orders','Orders'],['customers','Customers']];
+function renderAdmin(){
+ const on=S.adminSession;$('aOut').hidden=!on;$('atabs').hidden=!on;
+ if(!on){$('adminBody').innerHTML=`<form class="alog" data-form="admin"><svg width="56" height="56"><use href="#logo"/></svg><h2>Staff sign in</h2><p class="note">This area is for Pat's Corner staff to manage products, orders and rewards. Customers sign in from the shop.</p><label>Admin email<input name="email" type="email" required autocomplete="username"></label><label>Password<input name="pass" type="password" required autocomplete="current-password"></label><div class="err" id="aErr"></div><button class="btn pine">Sign in to admin</button><div class="demo">Demo login: admin@patscorner.ie / christmas</div></form>`;return}
+ $('atabs').innerHTML=ATABS.map(([k,v])=>`<button role="tab" data-act="atab" data-id="${k}" aria-selected="${aTab===k}">${v}</button>`).join('');
+ const s=S.settings,B=$('adminBody');
+ if(aTab==='overview'){const rev=S.orders.reduce((a,o)=>a+o.total,0),pts=S.users.reduce((a,u)=>a+u.points,0),newO=S.orders.filter(o=>o.status==='New').length,low=S.products.filter(p=>p.stock<6);
+  B.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:16px"><h2>Today at the shop</h2><button class="btn sm" data-act="addProduct">Add product</button></div>
+  <div class="stats"><div class="stat"><b>${S.orders.length}</b><span>orders, ${newO} waiting</span></div><div class="stat"><b>${eur(rev)}</b><span>online sales</span></div><div class="stat"><b>${S.users.length}</b><span>registered customers</span></div><div class="stat"><b>${pts}</b><span>points held by customers (${eur(pts/s.redeem)})</span></div></div>
+  <div class="acct" style="margin-top:18px"><div class="panel"><h3>Running low</h3>${low.length?low.map(p=>`<div class="line"><span>${esc(p.name)}</span><span>${p.stock} left</span></div>`).join(''):'<span class="note">Everything is well stocked.</span>'}</div>
+  <div class="panel"><h3>Latest orders</h3>${ordersTable(S.orders.slice(-5).reverse())}</div></div>
+  <p class="note" style="margin-top:18px">Demo data is saved in this browser only. <button class="linkbtn" data-act="reset">Reset demo data</button></p>`}
+ if(aTab==='products')B.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:16px"><h2>Products (${S.products.length})</h2><button class="btn" data-act="addProduct">Add product</button></div><div class="panel"><table class="stack"><thead><tr><th>Product</th><th>Category</th><th class="r">Price</th><th class="r">Stock</th><th>Christmas</th><th></th></tr></thead><tbody>${S.products.map(p=>`<tr><td><b>${esc(p.name)}</b><div class="note">${esc(p.size)}</div></td><td>${CATS.find(c=>c[0]===p.cat)?.[1]||''}</td><td class="r">${eur(p.price)}</td><td class="r">${p.stock}</td><td>${p.festive?'Yes':'No'}</td><td class="r"><button class="btn sm ghost" data-act="editProduct" data-id="${p.id}">Edit</button> <button class="btn sm ghost" data-act="delProduct" data-id="${p.id}">Delete</button></td></tr>`).join('')}</tbody></table></div>`;
+ if(aTab==='rewards')B.innerHTML=`<h2 style="margin-bottom:16px">Reward points</h2><div class="acct"><form class="panel" data-form="settings"><h3>Earning and spending</h3><label>Points earned per €1 spent<input name="earn" type="number" min="0" step="1" value="${s.earn}"></label><label class="sw"><input name="double" type="checkbox" ${s.double?'checked':''}>Christmas double points</label><label>Points needed for €1 off<input name="redeem" type="number" min="1" step="1" value="${s.redeem}"></label><label>Welcome bonus for new customers<input name="welcome" type="number" min="0" value="${s.welcome}"></label><label>Delivery fee (€)<input name="deliveryFee" type="number" min="0" step="0.01" value="${s.deliveryFee}"></label><label>Free delivery over (€)<input name="freeOver" type="number" min="0" step="0.01" value="${s.freeOver}"></label><button class="btn pine">Save settings</button></form>
+  <div class="panel"><h3>Free products customers can claim</h3><table><thead><tr><th>Product</th><th class="r">Points</th><th></th></tr></thead><tbody>${S.freebies.map(f=>`<tr><td>${esc(prod(f.pid)?.name||'Removed product')}</td><td class="r">${f.cost}</td><td class="r"><button class="btn sm ghost" data-act="delFree" data-id="${f.id}">Remove</button></td></tr>`).join('')||'<tr><td colspan="3" class="note">None yet.</td></tr>'}</tbody></table>
+  <form data-form="addFree" class="row" style="align-items:end"><label style="flex:2 1 180px">Product<select name="pid">${S.products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></label><label style="flex:1 1 100px">Points<input name="cost" type="number" min="1" value="300" required></label><button class="btn sm">Add reward</button></form></div></div>`;
+ if(aTab==='orders')B.innerHTML=`<h2 style="margin-bottom:16px">Orders</h2><div class="panel">${ordersTable(S.orders.slice().reverse(),true)}</div>`;
+ if(aTab==='customers')B.innerHTML=`<h2 style="margin-bottom:16px">Customers</h2><div class="panel"><table class="stack"><thead><tr><th>Name</th><th>Signed up with</th><th>Contact</th><th class="r">Orders</th><th class="r">Points</th><th></th></tr></thead><tbody>${S.users.map(u=>`<tr><td><b>${esc(u.name)}</b></td><td>${esc(u.provider)}</td><td>${esc(u.email||u.phone)}</td><td class="r">${S.orders.filter(o=>o.uid===u.id).length}</td><td class="r">${u.points}</td><td class="r"><button class="btn sm ghost" data-act="adjust" data-id="${u.id}">Adjust points</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+function ordersTable(list,edit){if(!list.length)return'<div class="empty">No orders yet.</div>';
+ return `<table class="stack"><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Type</th><th>Status</th><th class="r">Total</th></tr></thead><tbody>${list.map(o=>{const u=S.users.find(x=>x.id===o.uid);return `<tr><td><b>${o.id}</b><div class="note">${o.date}</div></td><td>${esc(u?.name||'Guest')}</td><td>${o.items.map(i=>esc(i.qty+'× '+i.name)+(i.price?'':' (free)')).join(', ')}</td><td>${o.mode}</td><td>${edit?`<select data-chg="status" data-id="${o.id}" aria-label="Order status" style="width:auto;min-height:36px">${['New','Ready','Completed'].map(x=>`<option ${o.status===x?'selected':''}>${x}</option>`).join('')}</select>`:`<span class="st ${o.status}">${o.status}</span>`}</td><td class="r">${eur(o.total)}</td></tr>`}).join('')}</tbody></table>`}
+function productForm(p){p=p||{name:'',cat:'christmas',price:'',size:'',stock:10,festive:true};
+ modal(p.id?'Edit product':'Add a product',`<form data-form="product" data-id="${p.id||''}" class="mb" style="padding:0"><label>Product name<input name="name" required value="${esc(p.name)}"></label><label>Category<select name="cat">${CATS.map(([k,v])=>`<option value="${k}" ${p.cat===k?'selected':''}>${v}</option>`).join('')}</select></label><div class="row"><label style="flex:1">Price (€)<input name="price" type="number" min="0" step="0.01" required value="${p.price}"></label><label style="flex:1">Stock<input name="stock" type="number" min="0" step="1" required value="${p.stock}"></label></div><label>Size or pack<input name="size" placeholder="e.g. 500g, 6 pack" value="${esc(p.size)}"></label><label class="sw"><input type="checkbox" name="festive" ${p.festive?'checked':''}>Show as a Christmas pick</label><button class="btn">${p.id?'Save changes':'Add to shop'}</button></form>`)}
+
+/* ---------- actions ---------- */
+const A={
+ cat:id=>{cat=id;renderCats();renderGrid()},
+ toShop:(id,b,e)=>{e.preventDefault();if(location.hash!=='#shop')location.hash='#shop';setTimeout(()=>$('shopnow').scrollIntoView({behavior:'smooth'}),30)},
+ goRewards:()=>{if(location.hash==='#account')location.hash='#shop';setTimeout(()=>$('rewards').scrollIntoView({behavior:'smooth'}),30)},
+ inc:id=>{const p=prod(id);if((cart[id]||0)>=p.stock)return toast('No more in stock');cart[id]=(cart[id]||0)+1;renderGrid();renderCart();if(cart[id]===1)toast(p.name+' added')},
+ dec:id=>{cart[id]--;if(cart[id]<=0)delete cart[id];renderGrid();renderCart()},
+ openCart, closeAll,
+ mode:id=>{$('cartBody').dataset.mode=id;renderCart()},
+ claim:id=>{claimed.push(id);renderCart()}, unclaim:id=>{claimed=claimed.filter(x=>x!==id);renderCart()},
+ account:()=>me()?location.hash='#account':loginModal(), login:()=>loginModal(), ltab:id=>loginModal(id),
+ google:()=>modal('Continue with Google',`<form data-form="google" class="mb" style="padding:0"><p class="note">Choose the Google account to use with Pat's Corner.</p><label>Gmail address<input name="email" type="email" required placeholder="you@gmail.com"></label><label>Your name<input name="name" required></label><button class="btn">Continue</button><div class="demo">Demo: on the live site this opens Google's own sign-in window.</div></form>`),
+ phone:()=>modal('Continue with phone',`<form data-form="phone1" class="mb" style="padding:0"><label>Mobile number<input name="phone" type="tel" required placeholder="087 123 4567" autocomplete="tel"></label><button class="btn">Text me a code</button></form>`),
+ checkout:()=>{const t=totals();if(!t.items.length&&!claimed.length)return;if(!me()){pending='checkout';return loginModal('signin','Sign in or register to place your order and collect points.')}
+  modal('Place your order',`<form data-form="order" class="mb" style="padding:0"><div class="line"><span>${t.mode==='Delivery'?'Delivery':'Click & collect'}</span><span>${eur(t.total)}</span></div>${t.mode==='Delivery'?'<label>Delivery address<textarea name="addr" rows="2" required></textarea></label>':''}<label>Payment<select name="pay"><option>Pay by card</option><option>Pay ${t.mode==='Delivery'?'on delivery':'in store'}</option></select></label><div class="note">You'll earn ${t.earned} points${t.spent?` and spend ${t.spent}`:''}.</div><button class="btn">Place order</button><div class="demo">Demo checkout: no payment is taken.</div></form>`)},
+ signout:()=>{S.session=null;save();redeem=0;claimed=[];location.hash='#shop';renderAll();toast('Signed out')},
+ atab:id=>{aTab=id;renderAdmin()}, adminOut:()=>{S.adminSession=false;save();renderAdmin()},
+ addProduct:()=>productForm(), editProduct:id=>productForm(prod(id)),
+ delProduct:id=>modal('Delete product?',`<p>Remove <b>${esc(prod(id).name)}</b> from the shop? Customers will no longer see it.</p><div class="row"><button class="btn" data-act="delYes" data-id="${id}">Delete</button><button class="btn ghost" data-act="closeAll">Cancel</button></div>`),
+ delYes:id=>{S.products=S.products.filter(p=>p.id!==id);S.freebies=S.freebies.filter(f=>f.pid!==id);delete cart[id];save();closeAll();renderAll();toast('Product removed')},
+ delFree:id=>{S.freebies=S.freebies.filter(f=>f.id!==id);save();renderAll()},
+ adjust:id=>{const u=S.users.find(x=>x.id===id);modal('Adjust points',`<form data-form="adjust" data-id="${id}" class="mb" style="padding:0"><p>${esc(u.name)} has <b>${u.points} pts</b>.</p><label>Add or remove points (use − to remove)<input name="n" type="number" step="1" required value="100"></label><button class="btn">Update balance</button></form>`)},
+ reset:()=>modal('Reset demo data?','<p>This puts back the sample products, customers and orders.</p><div class="row"><button class="btn" data-act="resetYes">Reset</button><button class="btn ghost" data-act="closeAll">Cancel</button></div>'),
+ resetYes:()=>{S=seed();S.adminSession=true;cart={};claimed=[];redeem=0;save();closeAll();renderAll();toast('Demo data reset')}
+};
+const F={
+ signin:d=>{const u=S.users.find(x=>x.email.toLowerCase()===d.get('email').trim().toLowerCase());if(!u)return loginModal('signin','No account with that email yet. Try Register.');if(u.provider==='Google')return loginModal('signin','This email uses Google. Tap Continue with Google.');if(u.pass!==d.get('pass'))return loginModal('signin','That password doesn\'t match.');signIn(u)},
+ register:d=>{const email=d.get('email').trim().toLowerCase();if(S.users.some(x=>x.email.toLowerCase()===email))return loginModal('register','That email is already registered. Sign in instead.');signIn(newUser({name:d.get('name').trim(),email,pass:d.get('pass'),provider:'Email'}),true)},
+ google:d=>{const email=d.get('email').trim().toLowerCase();let u=S.users.find(x=>x.email.toLowerCase()===email);const isNew=!u;if(!u)u=newUser({name:d.get('name').trim(),email,provider:'Google'});signIn(u,isNew)},
+ phone1:d=>{const ph=d.get('phone').replace(/[^\d+]/g,'');if(ph.length<7)return toast('Please enter a full mobile number');const code=String(1000+Math.floor(Math.random()*9000));
+  modal('Enter your code',`<form data-form="phone2" data-ph="${esc(ph)}" data-code="${code}" class="mb" style="padding:0"><p>We sent a 4-digit code to <b>${esc(ph)}</b>.</p><label>Code<input name="code" inputmode="numeric" maxlength="4" required autocomplete="one-time-code"></label>${S.users.some(u=>u.phone===ph)?'':'<label>Your name<input name="name" required></label>'}<div class="err" id="pErr"></div><button class="btn">Verify and continue</button><div class="demo">Demo: no text is sent. Your code is ${code}.</div></form>`)},
+ phone2:(d,f)=>{if(d.get('code')!==f.dataset.code){$('pErr').textContent='That code isn\'t right. Check the code and try again.';return}const ph=f.dataset.ph;let u=S.users.find(x=>x.phone===ph);const isNew=!u;if(!u)u=newUser({name:d.get('name').trim(),phone:ph,provider:'Phone'});signIn(u,isNew)},
+ order:d=>{const u=me(),t=totals();
+  const items=t.items.map(({p,q})=>({pid:p.id,name:p.name,qty:q,price:p.price}));
+  claimed.forEach(id=>{const f=S.freebies.find(x=>x.id===id),p=f&&prod(f.pid);if(p)items.push({pid:p.id,name:p.name,qty:1,price:0})});
+  items.forEach(i=>{const p=prod(i.pid);if(p)p.stock=Math.max(0,p.stock-i.qty)});
+  const o={id:'PC-'+S.seq++,uid:u.id,date:new Date().toISOString().slice(0,10),items,sub:t.sub,disc:t.disc,fee:t.fee,total:t.total,earned:t.earned,spent:t.spent,mode:t.mode,pay:d.get('pay'),addr:d.get('addr')||'',status:'New'};
+  u.points=u.points-t.spent+t.earned;S.orders.push(o);save();cart={};claimed=[];redeem=0;renderAll();
+  modal('Order placed',`<p>Thank you, ${esc(u.name.split(' ')[0])}! Order <b>${o.id}</b> is with the shop.</p><div class="box"><div class="line"><span>Paid</span><span>${eur(o.total)}</span></div><div class="line"><span>Points earned</span><span>+${o.earned}</span></div><div class="line"><span>New balance</span><span>${u.points} pts</span></div></div><p class="note">${o.mode==='Delivery'?'We\'ll text you when it\'s on the way.':'We\'ll text you when it\'s ready to collect.'}</p><div class="row"><a class="btn pine" href="#account" data-act="closeAll">See my orders</a><button class="btn ghost" data-act="closeAll">Keep shopping</button></div>`)},
+ admin:d=>{if(d.get('email').trim().toLowerCase()===S.admin.email&&d.get('pass')===S.admin.pass){S.adminSession=true;save();renderAdmin()}else $('aErr').textContent='Email or password is wrong.'},
+ product:(d,f)=>{const v={name:d.get('name').trim(),cat:d.get('cat'),price:Math.max(0,+d.get('price')),stock:Math.max(0,Math.floor(+d.get('stock'))),size:d.get('size').trim(),festive:!!d.get('festive')};
+  if(f.dataset.id)Object.assign(prod(f.dataset.id),v);else S.products.push({id:uid('p'),...v});save();closeAll();renderAll();toast(f.dataset.id?'Product updated':'Product added to the shop')},
+ settings:d=>{const s=S.settings;['earn','redeem','welcome','deliveryFee','freeOver'].forEach(k=>s[k]=Math.max(k==='redeem'?1:0,+d.get(k)||0));s.double=!!d.get('double');save();renderAll();toast('Reward settings saved')},
+ addFree:d=>{S.freebies.push({id:uid('r'),pid:d.get('pid'),cost:Math.max(1,Math.floor(+d.get('cost')))});save();renderAll();toast('Reward added')},
+ adjust:(d,f)=>{const u=S.users.find(x=>x.id===f.dataset.id);u.points=Math.max(0,u.points+Math.floor(+d.get('n')||0));save();closeAll();renderAll();toast(`${u.name} now has ${u.points} pts`)}
+};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=A[b.dataset.act];if(a){if(b.tagName==='BUTTON')e.preventDefault();a(b.dataset.id,b,e)}});
+document.addEventListener('submit',e=>{e.preventDefault();const f=e.target;F[f.dataset.form]?.(new FormData(f),f)});
+document.addEventListener('input',e=>{if(e.target.id==='redeem'){redeem=+e.target.value;renderCart(true)}});
+document.addEventListener('change',e=>{const t=e.target;if(t.id==='redeem'){renderCart();const r=$('redeem');if(r)r.focus();return}if(t.dataset.chg==='status'){const o=S.orders.find(x=>x.id===t.dataset.id);o.status=t.value;save();toast(o.id+' marked '+t.value)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+$('q').addEventListener('input',()=>{renderGrid()});$('sort').addEventListener('change',renderGrid);
+
+function renderAll(){renderCats();renderGrid();renderRewardsBand();renderCart();const u=me();$('acctBtn').textContent=u?`${u.name.split(' ')[0]} · ${u.points} pts`:'Sign in';if(location.hash==='#account')renderAccount();if(location.hash==='#admin')renderAdmin()}
+function route(){const h=location.hash;const adm=h==='#admin';$('adminView').hidden=!adm;$('shopView').hidden=adm;closeAll();
+ if(adm){renderAdmin();scrollTo(0,0);return}
+ if(h==='#account'&&!me()){location.hash='#shop';return}
+ $('accountView').hidden=h!=='#account';$('home').hidden=h==='#account';if(h==='#account'){renderAccount();scrollTo(0,0)}}
+/* scene details */
+{let aw='';for(let i=0;i<9;i++){const x=176+i*32.2;aw+=`<rect x="${x}" y="190" width="32.2" height="30" fill="${i%2?'#fff':'#c0262d'}"/><path d="M${x} 220a16.1 12 0 0 0 32.2 0z" fill="${i%2?'#fff':'#c0262d'}"/>`}$('awning').innerHTML='<rect x="170" y="184" width="300" height="8" fill="#5e1717"/>'+aw;
+ let li='',cols=['#e8b33c','#c0262d','#4fb36f','#fff'];for(let i=0;i<14;i++){const x=180+i*21,y=118+Math.sin(i*1.1)*2+8;li+=`<circle cx="${x}" cy="${y}" r="4.5" fill="${cols[i%4]}"/>`}$('lights').innerHTML='<path d="M176 126q72 10 144 0t144 0" stroke="#173b2e" stroke-width="1.5" fill="none"/>'+li;
+ const jars=[['#c0262d',200],['#3d7fc9',218],['#7a4b2a',236],['#b03a8a',282],['#e07b1f',300],['#2f7d4a',318],['#c0262d',334]];let sh='';jars.forEach(([c,x],i)=>{sh+=`<rect x="${x}" y="${250+(i%2)*4}" width="13" height="${20-(i%2)*4}" rx="2" fill="${c}"/><rect x="${x+2}" y="${284+(i%3)*3}" width="12" height="${20-(i%3)*3}" rx="2" fill="${jars[(i+3)%7][0]}"/>`});sh+='<rect x="205" y="314" width="50" height="20" rx="3" fill="#fff"/><rect x="282" y="314" width="56" height="20" rx="3" fill="#c0262d"/>';$('shelf').innerHTML=sh;
+ let sn='';for(let i=0;i<40;i++){const s=3+Math.random()*5;sn+=`<i style="left:${Math.random()*100}%;width:${s}px;height:${s}px;animation-duration:${7+Math.random()*9}s;animation-delay:-${Math.random()*14}s"></i>`}$('snow').innerHTML=sn}
+window.addEventListener('hashchange',route);
+renderAll();route();
+}
+</script>
+</body>
+</html>
